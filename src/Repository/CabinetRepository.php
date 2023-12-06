@@ -20,6 +20,15 @@ class CabinetRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Cabinet::class);
     }
+    // Add a custom method to fetch cabinets by speciality
+//    public function findBySpeciality($speciality)
+//    {
+//        return $this->createQueryBuilder('c')
+//            ->andWhere('c.$specialite = :specialite')
+//            ->setParameter('specialite', $speciality)
+//            ->getQuery()
+//            ->getResult();
+//    }
 
 //    /**
 //     * @return Cabinet[] Returns an array of Cabinet objects

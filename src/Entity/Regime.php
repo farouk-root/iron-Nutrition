@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\RegimeRepository;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: RegimeRepository::class)]
 class Regime
 {
@@ -14,22 +14,22 @@ class Regime
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\NotBlank (message:'Regime Price cannot be blank')]
+    #[Assert\Regex("/^[0-9]*$/", message:"Regime Price should not contain special characters")]
     private ?float $prixRegime = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank (message:'Regime Type cannot be blank')]
+    #[Assert\Regex("/^[a-zA-Z\s]+$/", message:"Regime Type should not contain special characters")]
     private ?string $typeRegime = null;
 
-    #[ORM\ManyToOne(inversedBy: 'regimes')]
-    private ?Cabinet $nomMED = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $prenomMED = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $reg = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $idmed = null;
+    #[ORM\ManyToOne(inversedBy: 'regimes')]
+    private ?Cabinet $idCabinet = null;
+
 
     public function getId(): ?int
     {
@@ -60,29 +60,7 @@ class Regime
         return $this;
     }
 
-    public function getNomMED(): ?Cabinet
-    {
-        return $this->nomMED;
-    }
 
-    public function setNomMED(?Cabinet $nomMED): static
-    {
-        $this->nomMED = $nomMED;
-
-        return $this;
-    }
-
-    public function getPrenomMED(): ?string
-    {
-        return $this->prenomMED;
-    }
-
-    public function setPrenomMED(?string $prenomMED): static
-    {
-        $this->prenomMED = $prenomMED;
-
-        return $this;
-    }
 
     public function getReg(): ?string
     {
@@ -96,14 +74,20 @@ class Regime
         return $this;
     }
 
-    public function getIdmed(): ?string
+
+    public function __toString(): string
     {
-        return $this->idmed;
+        return $this->typeRegime;
     }
 
-    public function setIdmed(?string $idmed): static
+    public function getIdCabinet(): ?Cabinet
     {
-        $this->idmed = $idmed;
+        return $this->idCabinet;
+    }
+
+    public function setIdCabinet(?Cabinet $idCabinet): static
+    {
+        $this->idCabinet = $idCabinet;
 
         return $this;
     }

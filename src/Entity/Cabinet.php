@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CabinetRepository::class)]
 class Cabinet
@@ -17,25 +18,37 @@ class Cabinet
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank (message:'Medecin Name cannot be blank')]
+    #[Assert\Regex("/^[a-zA-Z\s]+$/", message:"Medecin Name should not contain special characters")]
     private ?string $nomMED = null;
 
+    #[Assert\NotBlank (message:'Medecin First Name cannot be blank')]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $prenomMED = null;
 
+    #[Assert\NotBlank (message:'Medecin Must have a speciality')]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $specialite = null;
+
+    #[Assert\NotBlank (message:'Medecin Must have an address')]
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $adresse = null;
 
+    #[Assert\NotBlank (message:'Medecin Must have an email')]
+    #[Assert\Email(message: 'The email {{ value }} is not a valid email.')]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $email = null;
 
+    #[Assert\NotBlank (message:'Medecin Must have a phone number')]
+    #[Assert\Regex("/^[0-9]*$/", message:"Medecin Phone Number should not contain special characters")]
+    #[Assert\Length(max: 8, maxMessage: "Medecin Phone Number should not be more than 8 digits")]
     #[ORM\Column(type: Types::BIGINT)]
     private ?string $tel = null;
 
-    #[ORM\OneToMany(mappedBy: 'nomMED', targetEntity: Regime::class)]
+    #[ORM\OneToMany(mappedBy: 'idCabinet', targetEntity: Regime::class)]
     private Collection $regimes;
+
 
     public function __construct()
     {
@@ -136,16 +149,21 @@ class Cabinet
 
         return $this;
     }
+    public function __toString(): string
+    {
+        return $this->getNomMED();
+    }
 
     public function removeRegime(Regime $regime): static
     {
         if ($this->regimes->removeElement($regime)) {
             // set the owning side to null (unless already changed)
-            if ($regime->getNomMED() === $this) {
-                $regime->setNomMED(null);
+            if ($regime->getIdCabinet() === $this) {
+                $regime->setIdCabinet(null);
             }
         }
 
         return $this;
     }
+
 }
